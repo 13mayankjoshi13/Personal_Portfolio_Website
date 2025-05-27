@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mayank Joshi - Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Base Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .profile-photo {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #1da1f2;
+      box-shadow: 0 0 15px rgba(29, 161, 242, 0.7);
+      margin: 0 auto 20px;
+      display: block;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+    }
+
+    .highlight {
+      color: #1da1f2;
+    }
+
+    p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      padding: 0 10px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn {
+      background-color: #1da1f2;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #0d8ddb;
+    }
+
+    /* Responsive for Mobile */
+    @media (max-width: 480px) {
+      .profile-photo {
+        width: 120px;
+        height: 120px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="my_photo.jpg" alt="Mayank Joshi" class="profile-photo" />
+    <h1>Hello, I'm <span class="highlight">Mayank Joshi</span></h1>
+    <p>
+      I am an aspiring AI/ML engineer and developer passionate about building real-world solutions. Here's my portfolio showcasing my work, projects, and social presence.
+    </p>
+    <div class="buttons">
+      <a href="resume.html" class="btn">Resume</a>
+      <a href="projects.html" class="btn">Projects & Games</a>
+      <a href="contact.html" class="btn">Contact Me</a>
+      <a href="social.html" class="btn">Social Links</a>
+    </div>
+  </div>
+</body>
+</html>
