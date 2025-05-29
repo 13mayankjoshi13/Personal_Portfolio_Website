@@ -9,73 +9,70 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      display: flex;
-      min-height: 100vh;
       background-color: #121212;
       color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
-    .sidebar {
-      width: 240px;
-      background-color: #1f1f1f;
-      padding: 20px;
+
+    .container {
+      display: flex;
+      gap: 40px;
+      padding: 40px;
+      max-width: 1200px;
+      width: 100%;
       box-sizing: border-box;
+    }
+
+    .column {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 15px;
-      position: fixed;
-      height: 100vh;
-      overflow-y: auto;
-      text-align: center;
+      justify-content: center;
     }
-    .sidebar h2 {
-      margin-top: 0;
-      font-size: 22px;
+
+    .left-column h1 {
+      font-size: 36px;
       color: #00bfa5;
+      margin-bottom: 10px;
     }
-    .sidebar a {
-      color: #b2dfdb;
-      text-decoration: none;
+
+    .left-column p {
       font-size: 16px;
-      padding: 8px 12px;
-      border-radius: 6px;
-      transition: background-color 0.3s ease;
-      display: block;
-    }
-    .sidebar a:hover {
-      background-color: #00bfa5;
-      color: #121212;
-    }
-    .sidebar a.active {
-      background-color: #00bfa5;
-      color: #121212;
-      font-weight: bold;
-      border-left: 4px solid #fff;
-    }
-    .profile-photo {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      object-fit: cover;
       margin-bottom: 20px;
-      border: 3px solid #00bfa5;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
+      color: #bbbbbb;
     }
-    main.content {
-      margin-left: 260px;
-      padding: 30px 40px;
-      max-width: 900px;
-      width: 100%;
+
+    .social-links a {
+      margin-right: 15px;
+      font-size: 24px;
+      color: #1da1f2;
+      text-decoration: none;
     }
+
+    .social-links a:hover {
+      color: #0d8ddb;
+    }
+
+    .warning-message {
+      background-color: #ff5722;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
     .contact-form {
       display: flex;
       flex-direction: column;
       gap: 15px;
-      max-width: 500px;
     }
+
     .input-field {
-      padding: 10px;
+      padding: 12px;
       font-size: 16px;
       border-radius: 6px;
       border: none;
@@ -83,10 +80,12 @@
       background-color: #2a2a2a;
       color: #e0e0e0;
     }
+
     .input-field.textarea {
       height: 120px;
       resize: vertical;
     }
+
     .btn {
       background-color: #00bfa5;
       color: #121212;
@@ -95,55 +94,62 @@
       border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
-      max-width: 180px;
+      max-width: 200px;
       text-align: center;
       transition: background-color 0.3s ease;
       text-decoration: none;
-      display: inline-block;
     }
+
     .btn:hover {
       background-color: #008e76;
       color: #fff;
     }
-    .warning-message {
-      background-color: #ff5722;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      font-weight: bold;
-      max-width: 500px;
+
+    @media (max-width: 800px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .social-links {
+        justify-content: center;
+      }
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <img src="my_photo.jpg" alt="Mayank Joshi" class="profile-photo" />
-    <h2>Mayank Joshi</h2>
-    <a href="index.html">Home</a>
-    <a href="projects.html">Projects & Games</a>
-    <a href="contact.html" class="active">Contact Me</a>
-    <a href="social.html">Social Links</a>
-    <a href="resume.html">Resume</a>
-  </aside>
+  <div class="container">
+    <!-- Left Column -->
+    <div class="column left-column">
+      <h1>Let's Connect!</h1>
+      <p>Hi, I'm Mayank Joshi. If you have questions, want to collaborate, or just want to say hi — feel free to reach out using the form or my social links below!</p>
 
-  <main class="content">
-    <h1>Contact Me</h1>
-
-    <div class="warning-message">
-      📢 Service is temporarily closed. Please use <strong>social links</strong> from the Social Links section to contact me.
+      <div class="social-links">
+        <a href="https://github.com/13mayankjoshi13" target="_blank" title="GitHub">🐱</a>
+        <a href="https://linkedin.com/in/mayankjoshi_13" target="_blank" title="LinkedIn">🔗</a>
+        <a href="mailto:mayankjoshi640@gmail.com" title="Email">📧</a>
+        <a href="https://instagram.com/mayank_joshi_13" target="_blank" title="Instagram">📸</a>
+      </div>
     </div>
 
-    <form class="contact-form">
-      <input type="text" name="name" placeholder="Your Name" required class="input-field" />
-      <input type="email" name="email" placeholder="Your Email" required class="input-field" />
-      <textarea name="message" placeholder="Your Message" required class="input-field textarea"></textarea>
-      <button type="submit" class="btn">Send</button>
-    </form>
+    <!-- Right Column -->
+    <div class="column right-column">
+      <div class="warning-message">
+        📢 Service is temporarily closed. Please use <strong>social links</strong> to contact me.
+      </div>
 
-    <br />
-    <a href="index.html" class="btn">Back to Home</a>
-  </main>
+      <form class="contact-form">
+        <input type="text" name="name" placeholder="Your Name" required class="input-field" />
+        <input type="email" name="email" placeholder="Your Email" required class="input-field" />
+        <textarea name="message" placeholder="Your Message" required class="input-field textarea"></textarea>
+        <button type="submit" class="btn">Send</button>
+      </form>
+
+      <br />
+      <a href="index.html" class="btn">← Back to Home</a>
+    </div>
+  </div>
 
   <script>
     document.querySelector(".contact-form").addEventListener("submit", function (e) {

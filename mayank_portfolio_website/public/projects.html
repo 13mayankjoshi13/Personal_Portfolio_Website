@@ -9,128 +9,79 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      display: flex;
-      min-height: 100vh;
       background-color: #121212;
-      color: #eee;
+      color: #fff;
     }
-    /* Sidebar styles */
-    .sidebar {
-      width: 220px;
-      background-color: #1f1f1f;
-      padding: 20px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      position: fixed;
-      height: 100vh;
-      overflow-y: auto;
-      text-align: center;
-    }
-    .sidebar h2 {
-      margin: 0 0 15px 0;
-      font-size: 22px;
-      color: #00bfa5;
-    }
-    .sidebar a {
-      color: #b2dfdb;
-      text-decoration: none;
-      font-size: 16px;
-      padding: 8px 12px;
-      border-radius: 6px;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      display: block;
-    }
-    .sidebar a:hover,
-    .sidebar a.active {
-      background-color: #00bfa5;
-      color: #121212;
-    }
-    .profile-photo {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 20px;
-      border: 3px solid #00bfa5;
-      margin-left: auto;
-      margin-right: auto;
-      display: block;
-    }
-    /* Main content */
+
     .container {
-      margin-left: 240px; /* space for sidebar */
       max-width: 900px;
-      padding: 20px 40px;
-      width: 100%;
-      background-color: #121212;
+      padding: 40px 20px;
+      margin: 0 auto;
+      text-align: center;
     }
+
     h1 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    p {
-      text-align: center;
+      color: #00bfa5;
       margin-bottom: 20px;
     }
-    a {
-      color: #1DA1F2;
+
+    p {
+      margin-bottom: 30px;
+    }
+
+    .btn, .back-btn {
+      background-color: #1da1f2;
+      color: white;
       text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 30px;
       font-weight: bold;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+      display: inline-block;
+      margin: 10px auto;
+      text-align: center;
     }
-    a:hover {
-      text-decoration: underline;
+
+    .btn:hover, .back-btn:hover {
+      background-color: #0d8ddb;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
-      color: #eee;
+      margin-bottom: 20px;
     }
+
     th, td {
-      border: 1px solid #444;
-      padding: 10px;
+      border: 1px solid #333;
+      padding: 12px;
       text-align: left;
     }
+
     th {
-      background-color: #222;
-      color: #fff;
+      background-color: #1e1e1e;
+      color: #00bfa5;
     }
-    /* Back button */
-    .btn {
-      display: block;
-      margin: 30px auto 0;
-      width: 120px;
-      padding: 10px;
-      background-color: #00bfa5;
-      color: #121212;
-      text-align: center;
+
+    td a {
+      color: #1da1f2;
       text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
     }
-    .btn:hover {
-      background-color: #008e76;
-      color: #fff;
+
+    td a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <img src="my_photo.jpg" alt="Mayank Joshi" class="profile-photo" />
-    <h2>Mayank Joshi</h2>
-    <a href="index.html">Home</a>
-    <a href="projects.html" class="active">Projects & Games</a>
-    <a href="contact.html">Contact Me</a>
-    <a href="social.html">Social Links</a>
-    <a href="resume.html">Resume</a>
-  </aside>
 
   <main class="container">
     <h1>Projects & Games</h1>
-    <p>Explore some of my featured projects below. For more, visit my <a href="https://github.com/13mayankjoshi13" target="_blank" style="color:#1DA1F2;">GitHub profile</a>.</p>
+    <p>Explore some of my featured projects below. For more, visit my 
+      <a href="https://github.com/13mayankjoshi13" target="_blank" style="color:#1DA1F2;">GitHub profile</a>.
+    </p>
+
     <table>
       <thead>
         <tr>
@@ -143,31 +94,33 @@
         <tr>
           <td>IPL 2024 Data Analysis</td>
           <td>Machine learning and predictive modeling to select the best cricket team.</td>
-          <td><a href="https://github.com/13mayankjoshi13/IPL-2024-Data-Analytics-ML-DL-Model" target="_blank" rel="noopener noreferrer">GitHub</a></td>
+          <td><a href="https://github.com/13mayankjoshi13/IPL-2024-Data-Analytics-ML-DL-Model" target="_blank">GitHub</a></td>
         </tr>
         <tr>
           <td>Gesture-Controlled Boxing Game</td>
           <td>A 2D boxing game controlled by hand gestures using Python and AI.</td>
-          <td><a href="https://github.com/13mayankjoshi13/gesture_fighting_game" target="_blank" rel="noopener noreferrer">GitHub</a></td>
+          <td><a href="https://github.com/13mayankjoshi13/gesture_fighting_game" target="_blank">GitHub</a></td>
         </tr>
         <tr>
           <td>Web Supported Gesture Game</td>
-          <td>It is a web deployment version of boxing game using flask</td>
-          <td><a href="https://github.com/13mayankjoshi13/gesture_game_web" target="_blank" rel="noopener noreferrer">GitHub</a></td>
+          <td>Web deployment version of the boxing game using Flask.</td>
+          <td><a href="https://github.com/13mayankjoshi13/gesture_game_web" target="_blank">GitHub</a></td>
         </tr>
         <tr>
           <td>Assistive Glove Device</td>
-          <td>Prototype model for a startup, a multi-functional wearable glove to help people with disabilities using AI/ML.</td>
-          <td><a href="https://github.com/13mayankjoshi13/Assistive_Glove_Device" target="_blank" rel="noopener noreferrer">GitHub</a></td>
+          <td>AI/ML-powered wearable glove for disabled individuals.</td>
+          <td><a href="https://github.com/13mayankjoshi13/Assistive_Glove_Device" target="_blank">GitHub</a></td>
         </tr>
         <tr>
           <td>Personal Portfolio Website</td>
-          <td>This site itself, designed for showcasing projects and contact info.</td>
-          <td><a href="https://github.com/13mayankjoshi13/Personal_Portfolio_Website" target="_blank" rel="noopener noreferrer">GitHub</a></td>
+          <td>This site itself, showcasing my resume and projects.</td>
+          <td><a href="https://github.com/13mayankjoshi13/Personal_Portfolio_Website" target="_blank">GitHub</a></td>
         </tr>
       </tbody>
     </table>
-    <a href="index.html" class="btn">Back to Home</a>
+
+    <a href="index.html" class="btn">← Back</a>
   </main>
+
 </body>
 </html>

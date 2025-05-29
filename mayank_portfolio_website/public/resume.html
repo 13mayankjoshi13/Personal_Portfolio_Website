@@ -16,60 +16,13 @@
       background-color: #121212;
       color: #eee;
       display: flex;
+      justify-content: center;
+      padding: 40px 20px;
     }
 
-    /* Sidebar */
-    .sidebar {
-      width: 240px;
-      background-color: #1f1f1f;
-      padding: 20px;
-      height: 100vh;
-      position: fixed;
-      left: 0;
-      top: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .sidebar h2 {
-      font-size: 22px;
-      color: #00bfa5;
-      margin: 15px 0;
-    }
-
-    .sidebar a {
-      color: #b2dfdb;
-      text-decoration: none;
-      font-size: 16px;
-      padding: 10px 15px;
-      border-radius: 6px;
-      transition: 0.3s ease;
-      width: 100%;
-      text-align: center;
-    }
-
-    .sidebar a:hover,
-    .sidebar a.active {
-      background-color: #00bfa5;
-      color: #121212;
-    }
-
-    .profile-photo {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #00bfa5;
-    }
-
-    /* Main Content */
     .main-content {
-      margin-left: 240px;
-      padding: 40px 30px;
-      flex-grow: 1;
-      min-height: 100vh;
+      max-width: 900px;
+      width: 100%;
     }
 
     h1 {
@@ -120,19 +73,7 @@
       border: none;
     }
 
-    /* Responsive Behavior */
     @media (max-width: 768px) {
-      .sidebar {
-        position: fixed;
-        width: 200px;
-        padding: 15px;
-      }
-
-      .main-content {
-        margin-left: 200px;
-        padding: 20px;
-      }
-
       .preview-container {
         height: 400px;
       }
@@ -142,31 +83,9 @@
         padding: 10px 16px;
       }
     }
-
-    @media (max-width: 500px) {
-      .sidebar {
-        width: 160px;
-      }
-
-      .main-content {
-        margin-left: 160px;
-        padding: 15px;
-      }
-    }
   </style>
 </head>
 <body>
-
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <img src="my_photo.jpg" alt="Your Photo" class="profile-photo" />
-    <h2>Your Name</h2>
-    <a href="index.html">Home</a>
-    <a href="projects.html">Projects</a>
-    <a href="resume.html" class="active">Resume</a>
-    <a href="contact.html">Contact</a>
-    <a href="social.html">Social</a>
-  </div>
 
   <!-- Main Resume Section -->
   <div class="main-content">
@@ -180,7 +99,7 @@
     <div class="preview-container">
       <iframe src="resume.pdf"></iframe>
     </div>
+    <a href="index.html" class="btn">← Back</a>
   </div>
-
 </body>
 </html>

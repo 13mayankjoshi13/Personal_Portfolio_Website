@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Boxing Game Showcase</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #eee;
+      padding: 0;
+    }
+
+    .container {
+      padding: 40px 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      display: inline-block;
+      background-color: #00bfa5;
+      color: #121212;
+      padding: 10px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-bottom: 25px;
+      transition: background-color 0.3s;
+    }
+
+    .back-btn:hover {
+      background-color: #00a38f;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00bfa5;
+      margin-bottom: 30px;
+    }
+
+    .game-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: flex-start;
+    }
+
+    .game-card {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 191, 165, 0.2);
+      flex: 1 1 100%;
+      text-align: center;
+    }
+
+    .game-card h3 {
+      color: #b2dfdb;
+      margin-bottom: 10px;
+    }
+
+    .game-card p {
+      color: #ccc;
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .game-card p.text-sm {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .game-frame {
+      width: 100%;
+      height: 300px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      background-color: #00bfa5;
+      color: #121212;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #00a38f;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      .game-card {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+    <main class="container">
+    <h1>My Games</h1>
+    <div class="game-section">
+      
+      <!-- Boxing Game -->
+      <div class="game-card">
+        <h3>🥊 Boxing Game</h3>
+        <p>Control the boxer using hand gestures and speech recognition! Try to beat your opponent.</p>
+        <p class="text-sm text-gray-400 italic">
+          📌 This game is built using <strong>Python</strong>, <strong>OpenCV</strong>, and <strong>Speech Recognition</strong> libraries. It <strong>cannot be embedded in a web browser</strong> because it requires access to your webcam and microphone through native Python scripts.
+        </p>
+        <p class="text-sm text-gray-400">
+          🧠 <strong>Why not web-embedded?</strong><br>
+          - Browsers don’t support direct access to Python/OpenCV/speech libs.<br>
+          - Python requires local execution for gesture and voice controls.<br>
+          - HTML/JS games can be embedded, Python ones cannot.
+        </p>
+        <p class="text-sm text-gray-400">
+          💻 <strong>To Play:</strong><br>
+          1. Download files<br>
+          2. Install Python, OpenCV, and SpeechRecognition<br>
+          3. Run locally on your computer
+        </p>
+        <a href="https://github.com/13mayankjoshi13/gesture_fighting_game" class="btn" target="_blank">
+          View on GitHub
+        </a>
+      </div>
+
+      <!-- Placeholder Game -->
+      <div class="game-card">
+        <h3>🎮 Coming Soon</h3>
+        <p>More gesture-controlled or fun mini-games will appear here!</p>
+      </div>
+      <a href="index.html" class="back-btn">← Back</a>
+    </div>
+</body>
+</html>
