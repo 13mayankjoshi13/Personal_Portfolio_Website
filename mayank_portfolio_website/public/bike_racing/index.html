@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bike Racing Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #111;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    canvas {
+      background: linear-gradient(to top, #444, #222);
+      display: block;
+      border: 2px solid white;
+    }
+    #container {
+      position: relative;
+      width: 90vw;
+      max-width: 400px;
+      aspect-ratio: 9 / 16;
+    }
+    #startScreen, #gameOverScreen, #pauseScreen, #howToPlayOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 10;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 20px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    #howToPlayOverlay {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+    #howToPlayOverlay p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+<div id="container">
+  <div id="startScreen">
+    <h1>🏍️ Bike Racing Game</h1>
+    <button onclick="startGame()">Start Game</button>
+    <button onclick="showHowToPlay()">How to Play</button>
+  </div>
+  <div id="howToPlayOverlay">
+    <h2>How to Play</h2>
+    <p>🕹️ Use <strong>Arrow Keys</strong> or <strong>A/D</strong> to move your bike left or right.</p>
+    <p>📱 On mobile, tap the <strong>left or right side</strong> of the screen to move.</p>
+    <p>⛔ Avoid obstacles and score as much as you can!</p>
+    <p>⏸️ Press <strong>P</strong> to pause/resume the game.</p>
+    <button onclick="closeHowToPlay()">Back</button>
+  </div>
+  <div id="pauseScreen" style="display:none;">
+    <h1>Paused</h1>
+    <button onclick="resumeGame()">Resume</button>
+  </div>
+  <div id="gameOverScreen" style="display:none;">
+    <h1>Game Over!</h1>
+    <p id="finalScore"></p>
+    <button onclick="startGame()">Restart</button>
+  </div>
+  <canvas id="gameCanvas"></canvas>
+</div>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+resizeCanvas();
+
+let bike, keys, obstacles, lines;
+let obstacleSpeed, score, animationFrameId, lineOffset;
+let spawnRate = 1000;
+let lastSpawn = 0;
+let paused = false;
+let lastSpeedIncrementScore = 0;
+
+function resizeCanvas() {
+  const container = document.getElementById('container');
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+}
+
+function initGame() {
+  bike = {
+    x: canvas.width / 2 - 25,
+    y: canvas.height - 120,
+    width: 50,
+    height: 80,
+    speed: 12,       // Faster bike movement
+    color: 'red'
+  };
+  keys = {};
+  obstacles = [];
+  lines = [];
+  obstacleSpeed = 8; // Faster obstacle speed
+  score = 0;
+  lineOffset = 0;
+  paused = false;
+  lastSpeedIncrementScore = 0;
+  lastSpawn = performance.now();
+
+  for (let i = 0; i < canvas.height / 40; i++) {
+    lines.push(i * 40);
+  }
+}
+
+function drawBike() {
+  ctx.fillStyle = bike.color;
+  ctx.fillRect(bike.x, bike.y, bike.width, bike.height);
+}
+
+function createObstacle() {
+  const width = Math.random() * 50 + 30;
+  const x = Math.random() * (canvas.width - width);
+  obstacles.push({ x, y: -100, width, height: 20 });
+}
+
+function drawObstacles() {
+  ctx.fillStyle = 'yellow';
+  obstacles.forEach(ob => {
+    ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+    ob.y += obstacleSpeed;
+  });
+  obstacles = obstacles.filter(ob => ob.y < canvas.height);
+}
+
+function drawRoadLines() {
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 2;
+  lineOffset += obstacleSpeed;
+  if (lineOffset >= 40) lineOffset = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const y = (lines[i] + lineOffset) % canvas.height;
+    ctx.beginPath();
+    ctx.moveTo(canvas.width / 2, y);
+    ctx.lineTo(canvas.width / 2, y + 20);
+    ctx.stroke();
+  }
+}
+
+function checkCollision() {
+  for (let ob of obstacles) {
+    if (
+      bike.x < ob.x + ob.width &&
+      bike.x + bike.width > ob.x &&
+      bike.y < ob.y + ob.height &&
+      bike.y + bike.height > ob.y
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function drawScore() {
+  ctx.fillStyle = 'white';
+  ctx.font = '20px Arial';
+  ctx.fillText('Score: ' + Math.floor(score), 10, 30);
+}
+
+function update(timestamp) {
+  if (paused) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawRoadLines();
+  drawBike();
+  drawObstacles();
+  drawScore();
+
+  if (checkCollision()) {
+    endGame();
+    return;
+  }
+
+  if (keys['arrowleft'] || keys['a']) bike.x -= bike.speed;
+  if (keys['arrowright'] || keys['d']) bike.x += bike.speed;
+
+  bike.x = Math.max(0, Math.min(canvas.width - bike.width, bike.x));
+
+  if (timestamp - lastSpawn > spawnRate) {
+    createObstacle();
+    lastSpawn = timestamp;
+  }
+
+  score += 0.1;  // faster scoring to ramp up speed quickly
+  if (Math.floor(score) - lastSpeedIncrementScore >= 50) {
+    obstacleSpeed += 1; // bigger speed increments
+    lastSpeedIncrementScore = Math.floor(score);
+  }
+
+  animationFrameId = requestAnimationFrame(update);
+}
+
+function startGame() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('howToPlayOverlay').style.display = 'none';
+  document.getElementById('gameOverScreen').style.display = 'none';
+  document.getElementById('pauseScreen').style.display = 'none';
+  initGame();
+  animationFrameId = requestAnimationFrame(update);
+}
+
+function endGame() {
+  cancelAnimationFrame(animationFrameId);
+  document.getElementById('finalScore').innerText = 'Your Score: ' + Math.floor(score);
+  document.getElementById('gameOverScreen').style.display = 'flex';
+  const gameOverSound = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_9276ecf94e.mp3');
+  gameOverSound.play();
+}
+
+function pauseGame() {
+  paused = true;
+  cancelAnimationFrame(animationFrameId);
+  document.getElementById('pauseScreen').style.display = 'flex';
+}
+
+function resumeGame() {
+  paused = false;
+  document.getElementById('pauseScreen').style.display = 'none';
+  animationFrameId = requestAnimationFrame(update);
+}
+
+function showHowToPlay() {
+  document.getElementById('howToPlayOverlay').style.display = 'flex';
+  document.getElementById('startScreen').style.display = 'none';
+}
+
+function closeHowToPlay() {
+  document.getElementById('howToPlayOverlay').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'flex';
+}
+
+window.addEventListener('keydown', (e) => {
+  keys[e.key.toLowerCase()] = true;
+  if (e.key.toLowerCase() === 'p') {
+    if (paused) resumeGame();
+    else pauseGame();
+  }
+});
+
+window.addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
+
+window.addEventListener('touchstart', (e) => {
+  if (e.touches[0].clientX < canvas.width / 2) {
+    keys['a'] = true;
+  } else {
+    keys['d'] = true;
+  }
+});
+
+window.addEventListener('touchend', () => {
+  keys['a'] = false;
+  keys['d'] = false;
+});
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  // Optional: Re-center bike on resize
+  if (bike) bike.x = canvas.width / 2 - bike.width / 2;
+});
+</script>
+</body>
+</html>

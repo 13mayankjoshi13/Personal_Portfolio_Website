@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🌍 Flag Guess Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive;
+      background: linear-gradient(to bottom, #006064, #004d40);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      font-size: 6vw;
+      color: #ffeb3b;
+    }
+    #flagImage {
+      width: 100%;
+      max-width: 320px;
+      border: 5px solid white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
+    }
+    .option-btn {
+      width: 90%;
+      max-width: 300px;
+      margin: 10px auto;
+      padding: 15px;
+      border: none;
+      font-size: 5vw;
+      border-radius: 8px;
+      background-color: #009688;
+      color: white;
+      cursor: pointer;
+    }
+    .option-btn:hover {
+      background-color: #00796B;
+    }
+    #result {
+      margin-top: 15px;
+      font-size: 4vw;
+      color: #ff5722;
+    }
+    #progressBarContainer {
+      width: 90%;
+      height: 10px;
+      background: #004d40;
+      border-radius: 5px;
+      margin: 20px auto;
+      overflow: hidden;
+    }
+    #progressBar {
+      height: 100%;
+      background-color: #ffeb3b;
+      width: 100%;
+      transition: width 1s linear;
+    }
+    .hidden {
+      display: none !important;
+    }
+    @media (min-width: 768px) {
+      h1 { font-size: 26px; }
+      .option-btn { font-size: 18px; }
+      #result { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 Guess the Country / Flag Game</h1>
+  <div id="score">Score: 0</div>
+  <div id="streak">Streak: 0</div>
+  <div id="highScore">Best Streak: 0</div>
+
+  <div id="mainDisplay">
+    <img id="flagImage" src="" alt="Flag" />
+    <div id="countryName" style="font-size: 32px; margin: 20px;"></div>
+    <div id="progressBarContainer"><div id="progressBar"></div></div>
+    <div id="countdown" style="font-size: 20px; margin-top: 10px;"></div>
+  </div>
+
+  <div id="buttons"></div>
+  <div id="result"></div>
+  <button class="option-btn hidden" id="nextBtn" onclick="startGame()"></button>
+  <button class="option-btn" onclick="switchMode()">🌀 Switch Mode</button>
+
+  <audio id="timeoutSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4f06e17d8f.mp3?filename=error-126627.mp3"></audio>
+
+  <script>
+    const countries = [
+      { name: "Afghanistan", code: "af" }, { name: "Albania", code: "al" },
+      { name: "Algeria", code: "dz" }, { name: "Andorra", code: "ad" },
+      { name: "Angola", code: "ao" }, { name: "Argentina", code: "ar" },
+      { name: "Armenia", code: "am" }, { name: "Australia", code: "au" },
+      { name: "Austria", code: "at" }, { name: "Azerbaijan", code: "az" },
+      { name: "Bahamas", code: "bs" }, { name: "Bahrain", code: "bh" },
+      { name: "Bangladesh", code: "bd" }, { name: "Barbados", code: "bb" },
+      { name: "Belarus", code: "by" }, { name: "Belgium", code: "be" },
+      { name: "Belize", code: "bz" }, { name: "Benin", code: "bj" },
+      { name: "Bhutan", code: "bt" }, { name: "Bolivia", code: "bo" },
+      { name: "Bosnia and Herzegovina", code: "ba" }, { name: "Botswana", code: "bw" },
+      { name: "Brazil", code: "br" }, { name: "Brunei", code: "bn" },
+      { name: "Bulgaria", code: "bg" }, { name: "Burkina Faso", code: "bf" },
+      { name: "Burundi", code: "bi" }, { name: "Cambodia", code: "kh" },
+      { name: "Cameroon", code: "cm" }, { name: "Canada", code: "ca" },
+      { name: "Cape Verde", code: "cv" }, { name: "Central African Republic", code: "cf" },
+      { name: "Chad", code: "td" }, { name: "Chile", code: "cl" },
+      { name: "China", code: "cn" }, { name: "Colombia", code: "co" },
+      { name: "Comoros", code: "km" }, { name: "Congo (Brazzaville)", code: "cg" },
+      { name: "Congo (Kinshasa)", code: "cd" }, { name: "Costa Rica", code: "cr" },
+      { name: "Croatia", code: "hr" }, { name: "Cuba", code: "cu" },
+      { name: "Cyprus", code: "cy" }, { name: "Czechia", code: "cz" },
+      { name: "Denmark", code: "dk" }, { name: "Djibouti", code: "dj" },
+      { name: "Dominica", code: "dm" }, { name: "Dominican Republic", code: "do" },
+      { name: "Ecuador", code: "ec" }, { name: "Egypt", code: "eg" },
+      { name: "El Salvador", code: "sv" }, { name: "Equatorial Guinea", code: "gq" },
+      { name: "Eritrea", code: "er" }, { name: "Estonia", code: "ee" },
+      { name: "Eswatini", code: "sz" }, { name: "Ethiopia", code: "et" },
+      { name: "Fiji", code: "fj" }, { name: "Finland", code: "fi" },
+      { name: "France", code: "fr" }, { name: "Gabon", code: "ga" },
+      { name: "Gambia", code: "gm" }, { name: "Georgia", code: "ge" },
+      { name: "Germany", code: "de" }, { name: "Ghana", code: "gh" },
+      { name: "Greece", code: "gr" }, { name: "Grenada", code: "gd" },
+      { name: "Guatemala", code: "gt" }, { name: "Guinea", code: "gn" },
+      { name: "Guinea-Bissau", code: "gw" }, { name: "Guyana", code: "gy" },
+      { name: "Haiti", code: "ht" }, { name: "Honduras", code: "hn" },
+      { name: "Hungary", code: "hu" }, { name: "Iceland", code: "is" },
+      { name: "India", code: "in" }, { name: "Indonesia", code: "id" },
+      { name: "Iran", code: "ir" }, { name: "Iraq", code: "iq" },
+      { name: "Ireland", code: "ie" }, { name: "Israel", code: "il" },
+      { name: "Italy", code: "it" }, { name: "Jamaica", code: "jm" },
+      { name: "Japan", code: "jp" }, { name: "Jordan", code: "jo" },
+      { name: "Kazakhstan", code: "kz" }, { name: "Kenya", code: "ke" },
+      { name: "Kiribati", code: "ki" }, { name: "North Korea", code: "kp" },
+      { name: "South Korea", code: "kr" }, { name: "Kuwait", code: "kw" },
+      { name: "Kyrgyzstan", code: "kg" }, { name: "Laos", code: "la" },
+      { name: "Latvia", code: "lv" }, { name: "Lebanon", code: "lb" },
+      { name: "Lesotho", code: "ls" }, { name: "Liberia", code: "lr" },
+      { name: "Libya", code: "ly" }, { name: "Liechtenstein", code: "li" },
+      { name: "Lithuania", code: "lt" }, { name: "Luxembourg", code: "lu" },
+      { name: "Madagascar", code: "mg" }, { name: "Malawi", code: "mw" },
+      { name: "Malaysia", code: "my" }, { name: "Maldives", code: "mv" },
+      { name: "Mali", code: "ml" }, { name: "Malta", code: "mt" },
+      { name: "Marshall Islands", code: "mh" }, { name: "Mauritania", code: "mr" },
+      { name: "Mauritius", code: "mu" }, { name: "Mexico", code: "mx" },
+      { name: "Micronesia", code: "fm" }, { name: "Moldova", code: "md" },
+      { name: "Monaco", code: "mc" }, { name: "Mongolia", code: "mn" },
+      { name: "Montenegro", code: "me" }, { name: "Morocco", code: "ma" },
+      { name: "Mozambique", code: "mz" }, { name: "Myanmar", code: "mm" },
+      { name: "Namibia", code: "na" }, { name: "Nauru", code: "nr" },
+      { name: "Nepal", code: "np" }, { name: "Netherlands", code: "nl" },
+      { name: "New Zealand", code: "nz" }, { name: "Nicaragua", code: "ni" },
+      { name: "Niger", code: "ne" }, { name: "Nigeria", code: "ng" },
+      { name: "North Macedonia", code: "mk" }, { name: "Norway", code: "no" },
+      { name: "Oman", code: "om" }, { name: "Pakistan", code: "pk" },
+      { name: "Palau", code: "pw" }, { name: "Palestine", code: "ps" },
+      { name: "Panama", code: "pa" }, { name: "Papua New Guinea", code: "pg" },
+      { name: "Paraguay", code: "py" }, { name: "Peru", code: "pe" },
+      { name: "Philippines", code: "ph" }, { name: "Poland", code: "pl" },
+      { name: "Portugal", code: "pt" }, { name: "Qatar", code: "qa" },
+      { name: "Romania", code: "ro" }, { name: "Russia", code: "ru" },
+      { name: "Rwanda", code: "rw" }, { name: "Saint Kitts and Nevis", code: "kn" },
+      { name: "Saint Lucia", code: "lc" }, { name: "Saint Vincent and the Grenadines", code: "vc" },
+      { name: "Samoa", code: "ws" }, { name: "San Marino", code: "sm" },
+      { name: "Sao Tome and Principe", code: "st" }, { name: "Saudi Arabia", code: "sa" },
+      { name: "Senegal", code: "sn" }, { name: "Serbia", code: "rs" },
+      { name: "Seychelles", code: "sc" }, { name: "Sierra Leone", code: "sl" },
+      { name: "Singapore", code: "sg" }, { name: "Slovakia", code: "sk" },
+      { name: "Slovenia", code: "si" }, { name: "Solomon Islands", code: "sb" },
+      { name: "Somalia", code: "so" }, { name: "South Africa", code: "za" },
+      { name: "South Sudan", code: "ss" }, { name: "Spain", code: "es" },
+      { name: "Sri Lanka", code: "lk" }, { name: "Sudan", code: "sd" },
+      { name: "Suriname", code: "sr" }, { name: "Sweden", code: "se" },
+      { name: "Switzerland", code: "ch" }, { name: "Syria", code: "sy" },
+      { name: "Taiwan", code: "tw" }, { name: "Tajikistan", code: "tj" },
+      { name: "Tanzania", code: "tz" }, { name: "Thailand", code: "th" },
+      { name: "Timor-Leste", code: "tl" }, { name: "Togo", code: "tg" },
+      { name: "Tonga", code: "to" }, { name: "Trinidad and Tobago", code: "tt" },
+      { name: "Tunisia", code: "tn" }, { name: "Turkey", code: "tr" },
+      { name: "Turkmenistan", code: "tm" }, { name: "Tuvalu", code: "tv" },
+      { name: "Uganda", code: "ug" }, { name: "Ukraine", code: "ua" },
+      { name: "United Arab Emirates", code: "ae" }, { name: "United Kingdom", code: "gb" },
+      { name: "United States", code: "us" }, { name: "Uruguay", code: "uy" },
+      { name: "Uzbekistan", code: "uz" }, { name: "Vanuatu", code: "vu" },
+      { name: "Vatican City", code: "va" }, { name: "Venezuela", code: "ve" },
+      { name: "Vietnam", code: "vn" }, { name: "Yemen", code: "ye" },
+      { name: "Zambia", code: "zm" }, { name: "Zimbabwe", code: "zw" },
+    
+      { name: "Abkhazia", code: "ab" },
+      {name: "American Samoa", code: "as" },
+      { name: "Aruba", code: "aw" },
+      { name: "Bermuda", code: "bm" },
+      { name: "Bonaire, Sint Eustatius and Saba", code: "bq" },
+      { name: "British Virgin Islands", code: "vg" },
+      { name: "Cayman Islands", code: "ky" },
+      { name: "Cook Islands", code: "ck" },
+      { name: "Curaçao", code: "cw" },
+      { name: "Faroe Islands", code: "fo" },
+      { name: "French Guiana", code: "gf" },
+      { name: "French Polynesia", code: "pf" },
+      { name: "Gibraltar", code: "gi" },
+      { name: "Greenland", code: "gl" },
+      { name: "Guadeloupe", code: "gp" },
+      { name: "Guam", code: "gu" },
+      { name: "Hong Kong", code: "hk" },
+      { name: "Isle of Man", code: "im" },
+      { name: "Jersey", code: "je" },
+      { name: "Kosovo", code: "xk" },
+      { name: "Macau", code: "mo" },
+      { name: "Martinique", code: "mq" },
+      { name: "Mayotte", code: "yt" },
+      { name: "Montserrat", code: "ms" },
+      { name: "New Caledonia", code: "nc" },
+      { name: "Niue", code: "nu" },
+      { name: "Northern Cyprus", code: "nc" },
+      { name: "Northern Mariana Islands", code: "mp" },
+      { name: "Pitcairn Islands", code: "pn" },
+      { name: "Puerto Rico", code: "pr" },
+      { name: "Réunion", code: "re" },
+      { name: "Saint Barthélemy", code: "bl" },
+      { name: "Saint Helena", code: "sh" },
+      { name: "Saint Martin", code: "mf" },
+      { name: "Sint Maarten", code: "sx" },
+      { name: "South Ossetia", code: "so" },
+      { name: "South Georgia and the South Sandwich Islands", code: "gs" },
+      { name: "Svalbard and Jan Mayen", code: "sj" },
+      { name: "Tokelau", code: "tk" },
+      { name: "Turks and Caicos Islands", code: "tc" },
+      { name: "United States Virgin Islands", code: "vi" },
+      { name: "Wallis and Futuna", code: "wf" },
+      { name: "Western Sahara", code: "eh" }
+
+    ];
+
+
+    let correctAnswer = "", score = 0, streak = 0;
+    let highScore = localStorage.getItem("highScore") || 0;
+    let mode = "flag-to-name", timerInterval;
+    let playerName = localStorage.getItem("playerName") || "";
+
+    if (!playerName) {
+      playerName = prompt("Enter your name:", "Player") || "Player";
+      localStorage.setItem("playerName", playerName);
+    }
+
+    document.getElementById("highScore").textContent = `Best Streak: ${highScore}`;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function startGame() {
+      clearInterval(timerInterval);
+      document.getElementById("result").textContent = "";
+      document.getElementById("nextBtn").classList.add("hidden");
+
+      const options = shuffle([...countries]).slice(0, 3);
+      const answer = options[Math.floor(Math.random() * 3)];
+      correctAnswer = mode === "flag-to-name" ? answer.name : answer.code;
+
+      const flag = document.getElementById("flagImage");
+      const countryText = document.getElementById("countryName");
+      const btnContainer = document.getElementById("buttons");
+      btnContainer.innerHTML = "";
+
+      if (mode === "flag-to-name") {
+        flag.src = `https://flagcdn.com/w320/${answer.code}.png`;
+        flag.classList.remove("hidden");
+        countryText.textContent = "";
+        options.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.textContent = opt.name;
+          btn.onclick = () => checkAnswer(opt.name);
+          btnContainer.appendChild(btn);
+        });
+      } else {
+        flag.classList.add("hidden"); // ✅ Hide flag completely
+        countryText.textContent = answer.name;
+        options.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.innerHTML = `<img src="https://flagcdn.com/w320/${opt.code}.png" width="100%" />`;
+          btn.onclick = () => checkAnswer(opt.code);
+          btnContainer.appendChild(btn);
+        });
+      }
+
+      startTimer();
+    }
+
+    function checkAnswer(selected) {
+      clearInterval(timerInterval);
+      const result = document.getElementById("result");
+      const nextBtn = document.getElementById("nextBtn");
+
+      // ✅ Disable answer buttons
+      document.querySelectorAll("#buttons .option-btn").forEach(btn => btn.disabled = true);
+
+      if (selected.toLowerCase() === correctAnswer.toLowerCase()) {
+        score++;
+        streak++;
+        result.textContent = "✅ Correct!";
+        if (streak > highScore) {
+          highScore = streak;
+          localStorage.setItem("highScore", highScore);
+        }
+      } else {
+        result.innerHTML = `❌ Wrong! Correct: <strong>${correctAnswer}</strong><br>🎯 You scored <strong>${score}</strong> points.`;
+        score = 0;
+        streak = 0;
+      }
+
+      document.getElementById("score").textContent = `Score: ${score}`;
+      document.getElementById("streak").textContent = `Streak: ${streak}`;
+      document.getElementById("highScore").textContent = `Best Streak: ${highScore}`;
+      nextBtn.textContent = score === 0 ? "🔄 Try Again" : "➡️ Next";
+      nextBtn.classList.remove("hidden");
+    }
+
+    function startTimer() {
+      const bar = document.getElementById("progressBar");
+      const countdown = document.getElementById("countdown");
+      let timeLeft = 10;
+      bar.style.transition = "none";
+      bar.style.width = "100%";
+      bar.style.backgroundColor = "#ffeb3b";
+      countdown.textContent = `⏱️ Time Left: ${timeLeft}s`;
+
+      setTimeout(() => bar.style.transition = "width 1s linear", 50);
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        countdown.textContent = `⏱️ Time Left: ${timeLeft}s`;
+        if (timeLeft <= 3) bar.style.backgroundColor = "#ff5252";
+        bar.style.width = `${timeLeft * 10}%`;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById("timeoutSound").play();
+          checkAnswer("TIMEOUT");
+        }
+      }, 1000);
+    }
+
+    function switchMode() {
+      mode = mode === "flag-to-name" ? "name-to-flag" : "flag-to-name";
+      score = 0;
+      streak = 0;
+      startGame();
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🧼 Slippery Soap Escape</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Comic Sans MS", cursive;
+      background-color: #e0f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      text-align: center;
+      flex-direction: column;
+    }
+    #soap {
+      width: 100px;
+      height: 50px;
+      background: #ffffff;
+      border: 2px solid #00acc1;
+      border-radius: 20px;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      color: #007c91;
+      user-select: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00acc1;
+      transition: transform 0.1s;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #007c91;
+    }
+    #timer, #score {
+      font-size: 18px;
+      color: #006064;
+      margin-top: 10px;
+    }
+    #message {
+      font-size: 20px;
+      color: red;
+      margin-top: 20px;
+      font-weight: bold;
+      min-height: 28px;
+    }
+    button {
+      margin: 10px 10px 0 10px;
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      border: none;
+      background: #00acc1;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover:not(:disabled) {
+      background: #00838f;
+    }
+    button:disabled {
+      background: #80deea;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧼 Slippery Soap Escape</h1>
+  <div id="score">Score: 0</div>
+  <div id="timer">⏱ Time left: 30</div>
+  <div id="message"></div>
+  <div id="soap" style="display:none;">Catch me!</div>
+  <div>
+    <button id="startBtn">Start Game</button>
+    <button id="restartBtn" disabled>Restart Game</button>
+    <button id="quitBtn" disabled>Quit Game</button>
+  </div>
+
+  <script>
+    const soap = document.getElementById("soap");
+    const timerDisplay = document.getElementById("timer");
+    const scoreDisplay = document.getElementById("score");
+    const message = document.getElementById("message");
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const quitBtn = document.getElementById("quitBtn");
+
+    let timeLeft = 30;
+    let score = 0;
+    let caught = false;
+    let gameRunning = false;
+    let countdown;
+    let moveInterval;
+    let soapSpeed = 1500; // Initial move interval in ms
+
+    // To keep soap fully visible
+    const soapWidth = 100;
+    const soapHeight = 50;
+
+    function getRandomPosition() {
+      const maxX = window.innerWidth - soapWidth - 10;
+      const maxY = window.innerHeight - soapHeight - 10;
+      const randX = Math.random() * maxX;
+      const randY = Math.random() * maxY;
+      return { x: randX, y: randY };
+    }
+
+    function moveSoap() {
+      if (!gameRunning) return;
+      const { x, y } = getRandomPosition();
+      soap.style.left = `${x}px`;
+      soap.style.top = `${y}px`;
+      // Schedule next move
+      clearTimeout(moveInterval);
+      moveInterval = setTimeout(moveSoap, soapSpeed);
+    }
+
+    function startGame() {
+      caught = false;
+      gameRunning = true;
+      score = 0;
+      timeLeft = 30;
+      soapSpeed = 1500;
+      scoreDisplay.textContent = `Score: ${score}`;
+      timerDisplay.textContent = `⏱ Time left: ${timeLeft}`;
+      message.textContent = '';
+      soap.textContent = 'Catch me!';
+      soap.style.transform = 'scale(1)';
+      soap.style.display = 'flex';
+
+      startBtn.disabled = true;
+      restartBtn.disabled = false;
+      quitBtn.disabled = false;
+      soap.style.cursor = 'pointer';
+
+      // Start moving soap every soapSpeed ms
+      moveSoap();
+
+      // Start countdown
+      clearInterval(countdown);
+      countdown = setInterval(() => {
+        if (!gameRunning) return;
+        timeLeft--;
+        timerDisplay.textContent = `⏱ Time left: ${timeLeft}`;
+        if (timeLeft <= 0) {
+          endGame(false);
+        }
+      }, 1000);
+    }
+
+    function endGame(won) {
+      gameRunning = false;
+      clearInterval(countdown);
+      clearTimeout(moveInterval);
+      soap.style.display = 'flex';
+      if (won) {
+        message.style.color = 'green';
+        message.textContent = `😎 You caught the soap! Final Score: ${score}`;
+        soap.textContent = "😡 You win!";
+        soap.style.transform = 'scale(1.5)';
+      } else {
+        message.style.color = 'red';
+        message.textContent = `Too slow! The soap escaped 🧼💨 Final Score: ${score}`;
+        soap.textContent = "Bye loser!";
+        soap.style.cursor = 'default';
+      }
+      startBtn.disabled = false;
+      restartBtn.disabled = true;
+      quitBtn.disabled = true;
+    }
+
+    function quitGame() {
+      gameRunning = false;
+      clearInterval(countdown);
+      clearTimeout(moveInterval);
+      soap.style.display = 'none';
+      message.style.color = 'orange';
+      message.textContent = `Game quit. Final Score: ${score}`;
+      startBtn.disabled = false;
+      restartBtn.disabled = true;
+      quitBtn.disabled = true;
+    }
+
+    soap.addEventListener("mouseenter", () => {
+      if (!gameRunning) return;
+      caught = true;
+      score++;
+      scoreDisplay.textContent = `Score: ${score}`;
+      message.textContent = '';
+      soap.style.transform = 'scale(1.2)';
+      // Increase difficulty: move soap faster, min 400ms
+      soapSpeed = Math.max(400, soapSpeed - 100);
+      // Move soap immediately to new position
+      moveSoap();
+      caught = false;
+      // Reset timer to 30 seconds on every catch
+      timeLeft = 30;
+      timerDisplay.textContent = `⏱ Time left: ${timeLeft}`;
+    });
+
+    soap.addEventListener("touchstart", (e) => {
+      e.preventDefault(); // prevent scrolling on mobile
+      if (!gameRunning) return;
+      caught = true;
+      score++;
+      scoreDisplay.textContent = `Score: ${score}`;
+      message.textContent = '';
+      soap.style.transform = 'scale(1.2)';
+      soapSpeed = Math.max(400, soapSpeed - 100);
+      moveSoap();
+      caught = false;
+      timeLeft = 30;
+      timerDisplay.textContent = `⏱ Time left: ${timeLeft}`;
+    }, { passive: false });
+
+    startBtn.addEventListener("click", startGame);
+    restartBtn.addEventListener("click", () => {
+      startGame();
+      message.textContent = '';
+    });
+    quitBtn.addEventListener("click", quitGame);
+
+    // On window resize, reposition soap so it stays visible
+    window.addEventListener('resize', () => {
+      if (!gameRunning) return;
+      const { x, y } = getRandomPosition();
+      soap.style.left = `${x}px`;
+      soap.style.top = `${y}px`;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Word Twister Madness</title>
+<style>
+  body {
+    background: #222;
+    color: #eee;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 {
+    color: #ff4081;
+    margin-bottom: 10px;
+  }
+  #scrambledWord {
+    font-size: 2.5rem;
+    letter-spacing: 8px;
+    margin: 20px 0;
+    user-select: none;
+  }
+  #inputGuess {
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    display: none;
+  }
+  #feedback {
+    margin: 15px 0;
+    font-size: 1.3rem;
+    height: 30px;
+  }
+  #score, #timer {
+    font-size: 1.2rem;
+    margin: 10px 15px;
+  }
+  #gameOverScreen {
+    display: none;
+    margin-top: 30px;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: none;
+    background: #ff4081;
+    color: white;
+    cursor: pointer;
+    margin-top: 15px;
+  }
+  button:hover {
+    background: #e040fb;
+  }
+  @media (max-width: 480px) {
+    #scrambledWord {
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+    }
+    #inputGuess {
+      font-size: 1.2rem;
+      width: 90%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Word Twister Madness 🤪</h1>
+<div id="timer">Time: 30</div>
+<div id="score">Score: 0</div>
+<div id="scrambledWord">________</div>
+<input type="text" id="inputGuess" autocomplete="off" placeholder="Type your guess here" />
+<div id="feedback"></div>
+
+<button id="startBtn">Start Game</button>
+
+<div id="gameOverScreen">
+  <h2>Game Over!</h2>
+  <p>Your final score: <span id="finalScore">0</span></p>
+  <p>The correct word was: <span id="correctWord"></span></p>
+  <button id="restartBtn">Play Again</button>
+</div>
+
+<script>
+  const words = [
+    'banana', 'computer', 'javascript', 'coding', 'internet',
+    'keyboard', 'browser', 'function', 'variable', 'program',
+    'algorithm', 'react', 'angular', 'python', 'developer',
+    'gaming', 'mobile', 'screen', 'tablet', 'network'
+  ];
+
+  let currentWord = '';
+  let scrambled = '';
+  let score = 0;
+  let timeLeft = 30;
+  let timerInterval;
+  let gameOver = true;  // Initially true, game starts on button click
+
+  const scrambledWordEl = document.getElementById('scrambledWord');
+  const inputGuess = document.getElementById('inputGuess');
+  const feedback = document.getElementById('feedback');
+  const scoreEl = document.getElementById('score');
+  const timerEl = document.getElementById('timer');
+  const gameOverScreen = document.getElementById('gameOverScreen');
+  const finalScore = document.getElementById('finalScore');
+  const correctWordEl = document.getElementById('correctWord');
+  const restartBtn = document.getElementById('restartBtn');
+  const startBtn = document.getElementById('startBtn');
+
+  function shuffleWord(word) {
+    let arr = word.split('');
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    // Sometimes swap two letters again to confuse brain rot
+    if (Math.random() < 0.3 && arr.length > 3) {
+      let i = Math.floor(Math.random() * arr.length);
+      let j = Math.floor(Math.random() * arr.length);
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.join('');
+  }
+
+  function pickWord() {
+    currentWord = words[Math.floor(Math.random() * words.length)];
+    scrambled = shuffleWord(currentWord);
+    // Make sure scrambled isn’t the same as original
+    while (scrambled === currentWord) {
+      scrambled = shuffleWord(currentWord);
+    }
+    scrambledWordEl.textContent = scrambled.toUpperCase();
+  }
+
+  function startTimer() {
+    timeLeft = 30;
+    timerEl.textContent = `Time: ${timeLeft}`;
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = `Time: ${timeLeft}`;
+      if (timeLeft <= 0) {
+        endGame();
+      }
+      // Random brain rot: occasionally swap letters mid-game
+      if (!gameOver && Math.random() < 0.02) {
+        scrambled = shuffleWord(scrambled);
+        scrambledWordEl.textContent = scrambled.toUpperCase();
+      }
+    }, 1000);
+  }
+
+  function endGame() {
+    clearInterval(timerInterval);
+    gameOver = true;
+    feedback.textContent = '';
+    inputGuess.style.display = 'none';
+    timerEl.style.display = 'none';
+    scoreEl.style.display = 'none';
+    scrambledWordEl.textContent = '________';
+    gameOverScreen.style.display = 'block';
+    finalScore.textContent = score;
+    correctWordEl.textContent = currentWord.toUpperCase();
+    restartBtn.style.display = 'inline-block';
+  }
+
+  function resetGame() {
+    score = 0;
+    scoreEl.textContent = 'Score: 0';
+    gameOver = false;
+    inputGuess.style.display = 'inline-block';
+    inputGuess.value = '';
+    feedback.textContent = '';
+    gameOverScreen.style.display = 'none';
+    timerEl.style.display = 'block';
+    scoreEl.style.display = 'block';
+    pickWord();
+    startTimer();
+    inputGuess.focus();
+  }
+
+  inputGuess.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !gameOver) {
+      const guess = inputGuess.value.trim().toLowerCase();
+      if (guess === currentWord) {
+        score++;
+        scoreEl.textContent = `Score: ${score}`;
+        feedback.style.color = '#4caf50';
+        feedback.textContent = 'Correct! 🎉';
+        pickWord();
+        inputGuess.value = '';
+        timeLeft = 30; // reset timer for next word
+      } else {
+        feedback.style.color = '#f44336';
+        feedback.textContent = 'Wrong! Try again 😵';
+      }
+    }
+  });
+
+  restartBtn.addEventListener('click', () => {
+    resetGame();
+  });
+
+  startBtn.addEventListener('click', () => {
+    startBtn.style.display = 'none';
+    resetGame();
+  });
+</script>
+
+</body>
+</html>
